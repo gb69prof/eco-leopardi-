@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   stages.forEach(stage => {
 
+    // Se contiene già qualcosa (es. iframe scritto a mano) non toccarlo
+    if (stage.innerHTML.trim() !== "") return;
+
     const mode = stage.dataset.defaultMode;
 
     // -------- MODALITÀ IMMAGINE --------
@@ -21,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
         img.style.borderRadius = "8px";
         stage.appendChild(img);
       }
-
     }
 
     // -------- MODALITÀ VIDEO --------
@@ -32,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (videoHtml) {
         stage.innerHTML = videoHtml;
       }
-
     }
 
   });
