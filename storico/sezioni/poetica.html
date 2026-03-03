@@ -32,13 +32,14 @@
       </a>
 
       <div class="dropdown">
-        <button class="icon-btn js-drop-toggle" type="button" aria-label="Apri indice">
+        <button class="icon-btn js-drop-toggle" type="button" aria-label="Apri indice" aria-expanded="false">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z"/></svg> Indice ▾
         </button>
         <nav class="dropdown-menu" aria-label="Indice contenuti">
           <a href="sezioni/poetica.html"><strong>Poetica</strong><small>Vago e indefinito</small></a>
           <a href="sezioni/sensismo.html"><strong>Sensismo</strong><small>Accenno + approfondimento</small></a>
           <a href="sezioni/meccanicismo.html"><strong>Meccanicismo</strong><small>Il mondo come macchina</small></a>
+          <a href="sezioni/infinito.html"><strong>L’Infinito</strong><small>Il testo e la lettura</small></a>
         </nav>
       </div>
     </div>
@@ -281,5 +282,45 @@
   </main>
 
   <script src="../../assets/js/app.js"></script>
+
+  <!-- Fix robusto per menu "Indice" (se app.js non lo gestisce) -->
+  <script>
+    (function () {
+      const toggle = document.querySelector('.js-drop-toggle');
+      const dropdown = toggle?.closest('.dropdown');
+      const menu = dropdown?.querySelector('.dropdown-menu');
+      if (!toggle || !dropdown || !menu) return;
+
+      // evita doppia inizializzazione se la pagina viene ricaricata in SPA o se app.js fa già qualcosa
+      if (toggle.dataset.bound === '1') return;
+      toggle.dataset.bound = '1';
+
+      function isOpen() {
+        return dropdown.classList.contains('open') || dropdown.classList.contains('is-open');
+      }
+
+      function setOpen(open) {
+        dropdown.classList.toggle('open', open);
+        dropdown.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(!isOpen());
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!isOpen()) return;
+        if (dropdown.contains(e.target)) return;
+        setOpen(false);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen()) setOpen(false);
+      });
+    })();
+  </script>
 </body>
 </html>
