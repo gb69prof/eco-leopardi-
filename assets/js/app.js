@@ -137,19 +137,50 @@ document.addEventListener("DOMContentLoaded", () => {
     stage.appendChild(wrap);
   });
 
-  // ---------- 4) Dropdown indice ----------
-  document.addEventListener("click", (e) => {
-    const toggle = e.target.closest(".js-drop-toggle");
-    if (toggle) {
+  // ---------- 4) Dropdown indice (robusto) ----------
+  // Alcune pagine possono avere CSS che usa .open oppure .is-open: gestiamo entrambe.
+  const OPEN_CLASSES = ["open", "is-open"];
+
+  function dropdownIsOpen(dd) {
+    return OPEN_CLASSES.some((c) => dd.classList.contains(c));
+  }
+
+  function dropdownSetOpen(dd, open) {
+    OPEN_CLASSES.forEach((c) => dd.classList.toggle(c, open));
+    const t = qs(".js-drop-toggle", dd);
+    if (t) t.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  // Click sul toggle (una sola volta per elemento)
+  qsa(".js-drop-toggle").forEach((toggle) => {
+    if (toggle.dataset.bound === "1") return;
+    toggle.dataset.bound = "1";
+
+    toggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
       const dd = toggle.closest(".dropdown");
       if (!dd) return;
-      dd.classList.toggle("open");
-      return;
-    }
 
-    // click fuori: chiudi
-    qsa(".dropdown.open").forEach(dd => {
-      if (!dd.contains(e.target)) dd.classList.remove("open");
+      dropdownSetOpen(dd, !dropdownIsOpen(dd));
+    });
+  });
+
+  // Click fuori: chiudi
+  document.addEventListener("click", (e) => {
+    qsa(".dropdown").forEach((dd) => {
+      if (!dropdownIsOpen(dd)) return;
+      if (dd.contains(e.target)) return;
+      dropdownSetOpen(dd, false);
+    });
+  });
+
+  // ESC: chiudi
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    qsa(".dropdown").forEach((dd) => {
+      if (dropdownIsOpen(dd)) dropdownSetOpen(dd, false);
     });
   });
 
