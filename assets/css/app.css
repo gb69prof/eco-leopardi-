@@ -96,8 +96,16 @@ body{
   box-shadow: var(--shadow);
   padding: 10px;
   display:none;
+  z-index: 999; /* fix stacking: sopra header/pannelli */
 }
 .dropdown-menu.open{display:block}
+
+/* Fix: apri menu quando la classe viene messa sul contenitore dropdown */
+.dropdown.open .dropdown-menu,
+.dropdown.is-open .dropdown-menu{
+  display:block;
+}
+
 .dropdown-menu a{
   display:flex;
   gap:10px;
