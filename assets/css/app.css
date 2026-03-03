@@ -106,6 +106,12 @@ body{
   display:block;
 }
 
+/* Fallback accessibile: apre il menu anche senza JS */
+.dropdown:focus-within .dropdown-menu,
+.dropdown:hover .dropdown-menu{
+  display:block;
+}
+
 .dropdown-menu a{
   display:flex;
   gap:10px;
